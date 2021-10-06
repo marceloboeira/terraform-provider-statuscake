@@ -18,13 +18,12 @@ provider "mb" {
 
 resource "statuscake_contact_group" "my_fancy_group" {
   provider = mb
-  name     = "Call Me Maybe"
+  name     = "Call Me Maybe 3"
   ping_url = "https://marceloboeira.com/dont-touch-this"
 
   mobile_numbers = [
     "+49 176 99999999",
     "+49 176 88888888",
-    "+49 176 77777777",
   ]
 
   email_addresses = [
@@ -33,7 +32,15 @@ resource "statuscake_contact_group" "my_fancy_group" {
   ]
 
   integration_ids = [
+    "43432",
+    "43590",
     "99999",
-    "88888",
   ]
 }
+
+resource "statuscake_contact_group" "another_one" {
+  provider = mb
+  name     = "No, simply, no 3"
+
+}
+

@@ -6,6 +6,7 @@ import (
 	"github.com/StatusCakeDev/statuscake-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 // ContactGroupResource - Schema
@@ -20,30 +21,32 @@ func ContactGroupResource() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 			"ping_url": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
 			},
 			"mobile_numbers": {
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
-				Default:  []string{},
+				Type:        schema.TypeSet,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
+				DefaultFunc: defaultEmptyStringSet,
 			},
 			"email_addresses": {
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
-				Default:  []string{},
+				Type:        schema.TypeSet,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
+				DefaultFunc: defaultEmptyStringSet,
 			},
 			"integration_ids": {
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
-				Default:  []string{},
+				Type:        schema.TypeSet,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
+				DefaultFunc: defaultEmptyStringSet,
 			},
 		},
 	}
@@ -73,9 +76,9 @@ func createContactGroup(ctx context.Context, d *schema.ResourceData, i interface
 	res, err := client.CreateContactGroup(ctx).
 		Name(d.Get("name").(string)).
 		PingURL(d.Get("ping_url").(string)).
-		MobileNumbers(castSetToSliceStrings(d.Get("mobile_numbers").(*schema.Set).List())).
-		EmailAddresses(castSetToSliceStrings(d.Get("email_addresses").(*schema.Set).List())).
-		Integrations(castSetToSliceStrings(d.Get("integration_ids").(*schema.Set).List())).
+		MobileNumbers(normalize(d.Get("mobile_numbers").(*schema.Set).List())).
+		EmailAddresses(normalize(d.Get("email_addresses").(*schema.Set).List())).
+		Integrations(normalize(d.Get("integration_ids").(*schema.Set).List())).
 		Execute()
 
 	if err != nil {
@@ -91,17 +94,32 @@ func createContactGroup(ctx context.Context, d *schema.ResourceData, i interface
 func updateContactGroup(ctx context.Context, d *schema.ResourceData, i interface{}) (dg diag.Diagnostics) {
 	client := i.(*statuscake.APIClient)
 
-	err := client.UpdateContactGroup(ctx, d.Id()).
-		Name(d.Get("name").(string)).
-		PingURL(d.Get("ping_url").(string)).
-		MobileNumbers(castSetToSliceStrings(d.Get("mobile_numbers").(*schema.Set).List())).
-		EmailAddresses(castSetToSliceStrings(d.Get("email_addresses").(*schema.Set).List())).
-		Integrations(castSetToSliceStrings(d.Get("integration_ids").(*schema.Set).List())).
-		Execute()
+	// Only run update in case there are updated fields
+	if d.HasChanges("name", "ping_url", "mobile_numbers", "email_addresses", "integration_ids") {
+		update := client.UpdateContactGroup(ctx, d.Id())
 
-	if err != nil {
-		// TODO Improve error message: https://learn.hashicorp.com/tutorials/terraform/provider-debug?in=terraform/providers
-		return diag.FromErr(err)
+		// Update each field as it changes...
+		if d.HasChanges("name") {
+			update = update.Name(d.Get("name").(string))
+		}
+		if d.HasChanges("ping_url") {
+			update = update.PingURL(d.Get("ping_url").(string))
+		}
+		if d.HasChanges("mobile_numbers") {
+			update = update.MobileNumbers(normalize(d.Get("mobile_numbers").(*schema.Set).List()))
+		}
+		if d.HasChanges("email_addresses") {
+			update = update.EmailAddresses(normalize(d.Get("email_addresses").(*schema.Set).List()))
+		}
+		if d.HasChanges("integration_ids") {
+			update = update.Integrations(normalize(d.Get("integration_ids").(*schema.Set).List()))
+		}
+
+		err := update.Execute()
+		if err != nil {
+			// TODO Improve error message: https://learn.hashicorp.com/tutorials/terraform/provider-debug?in=terraform/providers
+			return diag.FromErr(err)
+		}
 	}
 
 	return readContactGroup(ctx, d, i)
@@ -119,19 +137,15 @@ func deleteContactGroup(ctx context.Context, d *schema.ResourceData, i interface
 	return dg
 }
 
-func orEmptySlice(a []string) []string {
-	if a == nil || len(a) == 0 {
-		return []string{}
+// Normalize list of strings
+func normalize(i []interface{}) []string {
+	r := make([]string, len(i))
+	for e, el := range i {
+		r[e] = el.(string)
 	}
-
-	return a
+	return r
 }
 
-func castSetToSliceStrings(configured []interface{}) []string {
-	res := make([]string, len(configured))
-
-	for i, element := range configured {
-		res[i] = element.(string)
-	}
-	return res
+func defaultEmptyStringSet() (i interface{}, e error) {
+	return []string{}, nil
 }
