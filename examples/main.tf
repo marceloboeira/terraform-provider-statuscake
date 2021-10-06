@@ -3,7 +3,7 @@ terraform {
   required_providers {
     mb = {
       source  = "marceloboeira/statuscake"
-      version = "0.1.0"
+      version = "1.0.0-rc1"
     }
   }
 }
@@ -42,5 +42,5 @@ resource "statuscake_contact_group" "another_one" {
   provider = mb
   name     = "No, simply, no 3"
 
+  integration_ids = []
 }
-

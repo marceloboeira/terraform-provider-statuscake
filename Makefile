@@ -1,7 +1,7 @@
 # Global
 ORG ?= marceloboeira
 PROVIDER ?= statuscake
-VERSION=0.1.0
+VERSION=1.0.0-rc1
 BINARY ?= terraform-provider-${PROVIDER}_${VERSION}
 
 # Local Binary (Plugin cache)
