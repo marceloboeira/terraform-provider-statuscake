@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+// ContactGroupResource - Schema
 func ContactGroupResource() *schema.Resource {
 	return &schema.Resource{
 		ReadContext:   updateContactGroup,
@@ -30,16 +31,19 @@ func ContactGroupResource() *schema.Resource {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
+				Default:  []string{},
 			},
 			"email_addresses": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
+				Default:  []string{},
 			},
 			"integration_ids": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
+				Default:  []string{},
 			},
 		},
 	}
