@@ -12,7 +12,7 @@ import (
 // ContactGroupResource - Schema
 func ContactGroupResource() *schema.Resource {
 	return &schema.Resource{
-		ReadContext:   updateContactGroup,
+		ReadContext:   readContactGroup,
 		CreateContext: createContactGroup,
 		UpdateContext: updateContactGroup,
 		DeleteContext: deleteContactGroup,
