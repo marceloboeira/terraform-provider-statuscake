@@ -16,6 +16,58 @@ Releases
 * [v1.0.0-rc1](https://github.com/marceloboeira/terraform-provider-statuscake/releases/tag/v1.0.0-rc1) - First usable release, see feature matrix for more details.
 * [v0.1.0](https://github.com/marceloboeira/terraform-provider-statuscake/releases/tag/v0.1.0) - Test release, making sure the whole process works - Non-Functional.
 
+Usage
+------
+
+This is, for now, a complementary provider for [StatusCakeDev/statuscake](http://github.com/statusCakeDev/terraform-provider-statuscake). It supports mainly missing features, such as API V1 Contact Groups.
+
+Therefore, usage is recommended side by side, like this:
+
+```hcl
+terraform {
+  required_providers {
+    statuscake = {
+      source  = "StatusCakeDev/statuscake"
+      version = "1.0.1"
+    }
+    # Important: Use an alternative name to avoid provider conflicts
+    bolo = {
+      source  = "marceloboeira/statuscake"
+      version = "1.0.0-rc2"
+    }
+  }
+}
+
+provider "bolo" {
+  # StatusCake API Key
+  apikey = "...."
+}
+
+## Resource Names Continue with `statuscake_` namepsace
+resource "statuscake_contact_group" "staff-engineering" {
+  provider = bolo
+  name     = "Staff Engineers"
+  ping_url = "staf"
+
+  mobile_numbers = [
+    "+49 176 99999999",
+    "+49 176 88888888",
+  ]
+
+  email_addresses = [
+    "noreply@marceloboeira.com",
+    "please.noreply@marceloboeira.com",
+  ]
+
+  integration_ids = [
+    "111",
+    "333",
+    "555",
+  ]
+}
+```
+
+
 Feature Matrix
 -------------
 
