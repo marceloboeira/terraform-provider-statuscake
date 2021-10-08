@@ -1,0 +1,99 @@
+package provider
+
+import (
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctesting"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+)
+
+// var testAccProviders map[string]*schema.Provider
+// var testAccProvider *schema.Provider
+// 
+// func init() {
+//   testAccProvider = Provider()
+//   testAccProviders = map[string]*schema.Provider{
+//     "contact_group": testAccProvider,
+//   }
+// }
+// example.Widget represents a concrete Go type that represents an API resource
+func TestAccContactGroup_basic(t *testing.T) {
+	cgName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+	resourceName := "contact_group.example"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckExampleResourceDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccExampleResource(rName),
+				Check: resource.ComposeTestCheckFunc(
+					// query the API to retrieve the widget object
+					res, _ := client.GetContactGroup(ctx, d.Id()).Execute()
+
+					testAccCheckExampleResourceExists(resourceName, resp.Data),
+
+					// verify remote values
+					testAccCheckExampleWidgetValues(widget, rName),
+
+					// verify local values
+					resource.TestCheckResourceAttr(resourceName, "name", rName),
+					resource.TestCheckResourceAttr(resourceName, "ping_url", ""),
+					resource.TestCheckResourceAttr(resourceName, "mobile_numbers", []string{}),
+					resource.TestCheckResourceAttr(resourceName, "integration_ids", []string{}),
+					resource.TestCheckResourceAttr(resourceName, "email_addresses", []string{}),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckExampleWidgetValues(widget *example.Widget, name string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if *widget.Active != true {
+			return fmt.Errorf("bad active state, expected \"true\", got: %#v", *widget.Active)
+		}
+		if *widget.Name != name {
+			return fmt.Errorf("bad name, expected \"%s\", got: %#v", name, *widget.Name)
+		}
+		return nil
+	}
+}
+
+// testAccCheckExampleResourceExists queries the API and retrieves the matching Widget.
+func testAccCheckExampleResourceExists(n string, widget *example.Widget) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		// find the corresponding state object
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found: %s", n)
+		}
+
+		// retrieve the configured client from the test setup
+		conn := testAccProvider.Meta().(*ExampleClient)
+		resp, err := conn.DescribeWidget(&example.DescribeWidgetsInput{
+			WidgetIdentifier: rs.Primary.ID,
+		})
+
+		if err != nil {
+			return err
+		}
+
+		if resp.Widget == nil {
+			return fmt.Errorf("Widget (%s) not found", rs.Primary.ID)
+		}
+
+		// assign the response Widget attribute to the widget pointer
+		*widget = *resp.Widget
+
+		return nil
+	}
+}
+
+// testAccExampleResource returns an configuration for a Contact Group with the given name
+func testAccExampleResource(name string) string {
+	return fmt.Sprintf(`
+resource "statuscake_contact_group" "main" {
+  name = "%s"
+}`, name)
+}
