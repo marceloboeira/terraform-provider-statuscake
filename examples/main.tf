@@ -18,7 +18,7 @@ provider "mb" {
 
 resource "statuscake_contact_group" "my_fancy_group" {
   provider = mb
-  name     = "Call Me Maybe 3"
+  name     = "Call Me Maybe"
   ping_url = "https://marceloboeira.com/dont-touch-this"
 
   mobile_numbers = [
@@ -40,7 +40,7 @@ resource "statuscake_contact_group" "my_fancy_group" {
 
 resource "statuscake_contact_group" "another_one" {
   provider = mb
-  name     = "No, simply, no 3"
+  name     = "No, God No"
 
   integration_ids = []
 }

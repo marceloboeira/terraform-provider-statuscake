@@ -27,7 +27,5 @@ func Provider() *schema.Provider {
 }
 
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (_ interface{}, dg diag.Diagnostics) {
-	client := statuscake.NewAPIClient(d.Get("apikey").(string))
-
-	return client, dg
+	return statuscake.NewAPIClient(d.Get("apikey").(string)), dg
 }

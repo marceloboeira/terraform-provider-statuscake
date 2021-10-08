@@ -57,15 +57,14 @@ func readContactGroup(ctx context.Context, d *schema.ResourceData, i interface{}
 
 	res, err := client.GetContactGroup(ctx, d.Id()).Execute()
 	if err != nil {
-		// TODO Improve error message: https://learn.hashicorp.com/tutorials/terraform/provider-debug?in=terraform/providers
 		return diag.FromErr(err)
 	}
 
 	d.Set("name", res.Data.Name)
+	d.Set("ping_url", res.Data.PingURL)
 	d.Set("mobile_numbers", res.Data.MobileNumbers)
 	d.Set("email_addresses", res.Data.EmailAddresses)
 	d.Set("integration_ids", res.Data.Integrations)
-	d.Set("ping_url", res.Data.PingURL)
 
 	return dg
 }
@@ -82,7 +81,6 @@ func createContactGroup(ctx context.Context, d *schema.ResourceData, i interface
 		Execute()
 
 	if err != nil {
-		// TODO Improve error message: https://learn.hashicorp.com/tutorials/terraform/provider-debug?in=terraform/providers
 		return diag.FromErr(err)
 	}
 
@@ -96,28 +94,15 @@ func updateContactGroup(ctx context.Context, d *schema.ResourceData, i interface
 
 	// Only run update in case there are updated fields
 	if d.HasChanges("name", "ping_url", "mobile_numbers", "email_addresses", "integration_ids") {
-		update := client.UpdateContactGroup(ctx, d.Id())
+		err := client.UpdateContactGroup(ctx, d.Id()).
+			Name(d.Get("name").(string)).
+			PingURL(d.Get("ping_url").(string)).
+			MobileNumbers(normalize(d.Get("mobile_numbers").(*schema.Set).List())).
+			EmailAddresses(normalize(d.Get("email_addresses").(*schema.Set).List())).
+			Integrations(normalize(d.Get("integration_ids").(*schema.Set).List())).
+			Execute()
 
-		// Update each field as it changes...
-		if d.HasChanges("name") {
-			update = update.Name(d.Get("name").(string))
-		}
-		if d.HasChanges("ping_url") {
-			update = update.PingURL(d.Get("ping_url").(string))
-		}
-		if d.HasChanges("mobile_numbers") {
-			update = update.MobileNumbers(normalize(d.Get("mobile_numbers").(*schema.Set).List()))
-		}
-		if d.HasChanges("email_addresses") {
-			update = update.EmailAddresses(normalize(d.Get("email_addresses").(*schema.Set).List()))
-		}
-		if d.HasChanges("integration_ids") {
-			update = update.Integrations(normalize(d.Get("integration_ids").(*schema.Set).List()))
-		}
-
-		err := update.Execute()
 		if err != nil {
-			// TODO Improve error message: https://learn.hashicorp.com/tutorials/terraform/provider-debug?in=terraform/providers
 			return diag.FromErr(err)
 		}
 	}
@@ -130,7 +115,6 @@ func deleteContactGroup(ctx context.Context, d *schema.ResourceData, i interface
 
 	err := client.DeleteContactGroup(ctx, d.Id()).Execute()
 	if err != nil {
-		// TODO Improve error message: https://learn.hashicorp.com/tutorials/terraform/provider-debug?in=terraform/providers
 		return diag.FromErr(err)
 	}
 
@@ -146,6 +130,7 @@ func normalize(i []interface{}) []string {
 	return r
 }
 
-func defaultEmptyStringSet() (i interface{}, e error) {
-	return []string{}, nil
+// Return a default empty string slice for schema.TypeSet
+func defaultEmptyStringSet() (_ interface{}, e error) {
+	return make([]string, 0), nil
 }
