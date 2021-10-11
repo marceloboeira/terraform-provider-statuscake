@@ -1,3 +1,6 @@
+## Local Environment Variables
+.env
+
 # Binaries
 bin/
 dist/

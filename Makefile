@@ -1,3 +1,9 @@
+# Environment
+ifneq ("$(wildcard .env)","")
+include .env
+export
+endif
+
 # Global
 ORG ?= marceloboeira
 PROVIDER ?= statuscake
@@ -63,4 +69,4 @@ test: ## Runs tests
 
 .PHONY: testacc
 testacc: ## Runs acceptance tests
-	@TF_ACC=1 go test ${TEST} -v ${TESTARGS} -timeout 120m
+	@STATUSCAKE_APIKEY=${STATUSCAKE_APIKEY} TF_ACC=1 go test ${TEST} -v ${TESTARGS} -timeout 120m
