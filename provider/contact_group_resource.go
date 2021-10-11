@@ -31,22 +31,19 @@ func ContactGroupResource() *schema.Resource {
 				ValidateFunc: validation.IsURLWithHTTPorHTTPS,
 			},
 			"mobile_numbers": {
-				Type:        schema.TypeSet,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Optional:    true,
-				DefaultFunc: defaultEmptyStringSet,
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
 			},
 			"email_addresses": {
-				Type:        schema.TypeSet,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Optional:    true,
-				DefaultFunc: defaultEmptyStringSet,
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
 			},
 			"integration_ids": {
-				Type:        schema.TypeSet,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Optional:    true,
-				DefaultFunc: defaultEmptyStringSet,
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
 			},
 		},
 	}
@@ -60,11 +57,21 @@ func readContactGroup(ctx context.Context, d *schema.ResourceData, i interface{}
 		return diag.FromErr(err)
 	}
 
-	d.Set("name", res.Data.Name)
-	d.Set("ping_url", res.Data.PingURL)
-	d.Set("mobile_numbers", res.Data.MobileNumbers)
-	d.Set("email_addresses", res.Data.EmailAddresses)
-	d.Set("integration_ids", res.Data.Integrations)
+	if err := d.Set("name", res.Data.Name); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("ping_url", res.Data.PingURL); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("mobile_numbers", res.Data.MobileNumbers); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("email_addresses", res.Data.EmailAddresses); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("integration_ids", res.Data.Integrations); err != nil {
+		return diag.FromErr(err)
+	}
 
 	return dg
 }
@@ -128,9 +135,4 @@ func normalize(i []interface{}) []string {
 		r[e] = el.(string)
 	}
 	return r
-}
-
-// Return a default empty string slice for schema.TypeSet
-func defaultEmptyStringSet() (_ interface{}, e error) {
-	return make([]string, 0), nil
 }

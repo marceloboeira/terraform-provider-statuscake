@@ -8,6 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+const ENV_APIKEY = "STATUSCAKE_APIKEY"
+
 // Provider -
 func Provider() *schema.Provider {
 	return &schema.Provider{
@@ -15,7 +17,7 @@ func Provider() *schema.Provider {
 			"apikey": {
 				Type:        schema.TypeString,
 				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("STATUSCAKE_APIKEY", nil),
+				DefaultFunc: schema.EnvDefaultFunc(ENV_APIKEY, nil),
 				Description: "API Key for StatusCake",
 			},
 		},
