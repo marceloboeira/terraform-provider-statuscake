@@ -7,7 +7,7 @@ endif
 # Global
 ORG ?= marceloboeira
 PROVIDER ?= statuscake
-VERSION=1.0.0-rc2
+VERSION=1.0.0-rc3
 BINARY ?= terraform-provider-${PROVIDER}_${VERSION}
 
 # Local Binary (Plugin cache)

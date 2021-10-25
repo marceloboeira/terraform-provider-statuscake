@@ -3,7 +3,7 @@ terraform {
   required_providers {
     mb = {
       source  = "marceloboeira/statuscake"
-      version = "1.0.0-rc2"
+      version = "1.0.0-rc3"
     }
   }
 }
