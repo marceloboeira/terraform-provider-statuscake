@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/StatusCakeDev/statuscake-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -54,23 +55,23 @@ func readContactGroup(ctx context.Context, d *schema.ResourceData, i interface{}
 
 	res, err := client.GetContactGroup(ctx, d.Id()).Execute()
 	if err != nil {
-		return diag.FromErr(err)
+		return Prettify(dg, fmt.Sprintf("Error from Statuscake API when reading contact group %s", d.Id()), err, true)
 	}
 
 	if err := d.Set("name", res.Data.Name); err != nil {
-		return diag.FromErr(err)
+		return Prettify(dg, fmt.Sprintf("Error setting property name for %s", d.Id()), err, false)
 	}
 	if err := d.Set("ping_url", res.Data.PingURL); err != nil {
-		return diag.FromErr(err)
+		return Prettify(dg, fmt.Sprintf("Error setting property name for %s", d.Id()), err, false)
 	}
 	if err := d.Set("mobile_numbers", res.Data.MobileNumbers); err != nil {
-		return diag.FromErr(err)
+		return Prettify(dg, fmt.Sprintf("Error setting property name for %s", d.Id()), err, false)
 	}
 	if err := d.Set("email_addresses", res.Data.EmailAddresses); err != nil {
-		return diag.FromErr(err)
+		return Prettify(dg, fmt.Sprintf("Error setting property name for %s", d.Id()), err, false)
 	}
 	if err := d.Set("integration_ids", res.Data.Integrations); err != nil {
-		return diag.FromErr(err)
+		return Prettify(dg, fmt.Sprintf("Error setting property name for %s", d.Id()), err, false)
 	}
 
 	return dg
@@ -86,9 +87,8 @@ func createContactGroup(ctx context.Context, d *schema.ResourceData, i interface
 		EmailAddresses(normalize(d.Get("email_addresses").(*schema.Set).List())).
 		Integrations(normalize(d.Get("integration_ids").(*schema.Set).List())).
 		Execute()
-
 	if err != nil {
-		return diag.FromErr(err)
+		return Prettify(dg, "Error from Statuscake API when creating contact group", err, true)
 	}
 
 	d.SetId(res.Data.NewID)
@@ -110,7 +110,7 @@ func updateContactGroup(ctx context.Context, d *schema.ResourceData, i interface
 			Execute()
 
 		if err != nil {
-			return diag.FromErr(err)
+			return Prettify(dg, fmt.Sprintf("Error from Statuscake API when updating contact group %s", d.Id()), err, true)
 		}
 	}
 
@@ -122,7 +122,7 @@ func deleteContactGroup(ctx context.Context, d *schema.ResourceData, i interface
 
 	err := client.DeleteContactGroup(ctx, d.Id()).Execute()
 	if err != nil {
-		return diag.FromErr(err)
+		return Prettify(dg, fmt.Sprintf("Error from Statuscake API when deleting contact group %s", d.Id()), err, true)
 	}
 
 	return dg
