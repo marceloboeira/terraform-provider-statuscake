@@ -34,7 +34,7 @@ terraform {
     # Important: Use an alternative name to avoid provider conflicts
     bolo = {
       source  = "marceloboeira/statuscake"
-      version = "1.0.0-rc2"
+      version = "1.0.0-rc3"
     }
   }
 }
@@ -67,7 +67,6 @@ resource "statuscake_contact_group" "staff-engineering" {
   ]
 }
 ```
-
 
 Feature Matrix
 -------------
