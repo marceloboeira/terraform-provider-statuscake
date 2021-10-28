@@ -11,7 +11,6 @@ To view the full documentation of this provider, we recommend checking the [Terr
 
 Releases
 ---------
-
 * [v1.0.0-rc3](https://github.com/marceloboeira/terraform-provider-statuscake/releases/tag/v1.0.0-rc4) - Bug fixes, tests, improved error messages
 * [v1.0.0-rc2](https://github.com/marceloboeira/terraform-provider-statuscake/releases/tag/v1.0.0-rc2) - Bug fixes, stable release candidate.
 * [v1.0.0-rc1](https://github.com/marceloboeira/terraform-provider-statuscake/releases/tag/v1.0.0-rc1) - First usable release, see feature matrix for more details.
@@ -73,15 +72,18 @@ Feature Matrix
 
 |        Entity | Feature | Status               |
 |--------------:|---------|:--------------------:|
-| Contact Group | Create  |  ✅ (>= v1.0.0-rc1)  |
+| Contact Group | Read    |  ✅ (>= v1.0.0-rc1)  |
+|               | Create  |  ✅ (>= v1.0.0-rc1)  |
 |               | Update  |  ✅ (>= v1.0.0-rc1)  |
 |               | Delete  |  ✅ (>= v1.0.0-rc1)  |
 |               | Import  |  ✅ (>= v1.0.0-rc1)  |
-| Test          | Create  |  ⛔️                  |
+| Test          | Read    |  ⛔️                  |
+|               | Create  |  ⛔️                  |
 |               | Update  |  ⛔️                  |
 |               | Delete  |  ⛔️                  |
 |               | Import  |  ⛔️                  |
-| Integrations  | Create  |  ⛔️                  |
+| Integrations  | Read    |  ⛔️                  |
+|               | Create  |  ⛔️                  |
 |               | Update  |  ⛔️                  |
 |               | Delete  |  ⛔️                  |
 |               | Import  |  ⛔️                  |
