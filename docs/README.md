@@ -12,6 +12,7 @@ To view the full documentation of this provider, we recommend checking the [Terr
 Releases
 ---------
 
+* [v1.0.0-rc3](https://github.com/marceloboeira/terraform-provider-statuscake/releases/tag/v1.0.0-rc4) - Bug fixes, tests, improved error messages
 * [v1.0.0-rc2](https://github.com/marceloboeira/terraform-provider-statuscake/releases/tag/v1.0.0-rc2) - Bug fixes, stable release candidate.
 * [v1.0.0-rc1](https://github.com/marceloboeira/terraform-provider-statuscake/releases/tag/v1.0.0-rc1) - First usable release, see feature matrix for more details.
 * [v0.1.0](https://github.com/marceloboeira/terraform-provider-statuscake/releases/tag/v0.1.0) - Test release, making sure the whole process works - Non-Functional.
