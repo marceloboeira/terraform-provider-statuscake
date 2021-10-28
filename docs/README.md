@@ -94,6 +94,10 @@ Feature Matrix
 * **Tests** - Not priority as the core provider supports this, PRs are welcome
 * **Integrations** - Not possible since there is no API from StatusCake side to enable the terraform provider
 
+### Troubleshooting
+
+* StatusCake has a very low threshold on req/s, if you have many tests or contact groups you might want to limit the number of resources/s being manipulated by terraform. e.g.: `terraform plan -parallelism=1`.
+
 Contributing
 ------------
 
