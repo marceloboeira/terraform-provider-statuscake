@@ -1,7 +1,7 @@
 StatusCake Terraform Provider
 ==================
 <p align="center" style="display: flex;justify-content: center; align-items: center; height: 200px;">
-    <img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" height="100px">
+    <img src="https://raw.githubusercontent.com/hashicorp/terraform-website/master/content/source/assets/images/logo-terraform-main.svg" height="100px">
 </p>
 
 Welcome to the Status Terraform Provider! This provider is heavily inspired by the official one but targeting the new functionalities of the [StatusCake V1.0-beta API](https://www.statuscake.com/api/v1/).
